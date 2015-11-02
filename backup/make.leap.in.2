@@ -1,0 +1,35 @@
+#!/bin/bash -ue
+
+dir=$1
+reduce -trim $dir/build/leap1.pdb > $dir/build/leap2.pdb
+if [[ $_reduced_ = 'n' ]]
+then
+python /gne/home/tomp/genericMD/CYS2CYX.py $dir/build/leap2.pdb > temp.sh
+chmod 755 temp.sh
+./temp.sh $dir
+fi
+
+
+cat << eof > $dir/input/leap.in.2
+source leaprc.ff99SB
+loadOff solvents.lib
+loadOff /gne/home/tomp/KYN/Lkyn.lib
+parm1 = loadAmberParams /gne/home/tomp/KYN/kyn.frcmod
+set default PBradii bondi
+mol=loadpdb $dir/build/leap2.pdb
+eof
+
+if [[ $_reduced_ = 'n' ]]
+then
+python /gne/home/tomp/genericMD/leapSS.py $dir/build/leap2.pdb >> $dir/input/leap.in.2
+fi
+
+cat << eof >> $dir/input/leap.in.2
+saveamberparm mol $dir/build/$_name_.stripped.top $dir/build/$_name_.stripped.crd
+saveOff mol  $dir/build/mol.dat
+quit
+eof
+
+
+
+

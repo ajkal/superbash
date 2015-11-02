@@ -1,0 +1,36 @@
+#!/bin/bash
+
+dir=$1
+reduce -trim $dir/build/leap1.pdb > $dir/build/leap2.pdb
+if [[ $_reduced_ = 'n' ]]; then
+python CYS2CYX.py $dir/build/leap2.pdb > temp.sh
+chmod 755 temp.sh
+./temp.sh $dir
+fi
+
+cat << eof > $dir/input/leap.in.2
+source oldff/leaprc.ff99SB
+
+loadamberprep ~/forleap/GDP.prep
+loadamberprep ~/forleap/GTP.prep
+loadamberparams ~/forleap/frcmod.phos
+loadoff ions94.lib
+loadOff solvents.lib
+
+set default PBradii bondi
+mol=loadpdb $dir/build/leap2.pdb
+eof
+
+if [[ $_reduced_ = 'n' ]]; then
+python leapSS.py $dir/build/leap2.pdb >> $dir/input/leap.in.2
+fi
+
+cat << eof >> $dir/input/leap.in.2
+saveamberparm mol $dir/build/$_name_.stripped.top $dir/build/$_name_.stripped.crd
+saveOff mol  $dir/build/mol.dat
+quit
+eof
+
+
+
+

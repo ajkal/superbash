@@ -1,0 +1,32 @@
+#!/bin/bash
+
+##############################################################################
+#       $URL: N/A
+#       $Date: 2012-08-03 17:57:37 -0700 (Fri, 03 Aug 2012) $
+#       $Author: tomp $
+#       $Revised: kalenkiewiczaj $
+#       $Revision: ? $
+##############################################################################
+dir=$1
+
+boxBorder=$_boxdim_
+
+cat << eof > $dir/input/leap.in.3
+source oldff/leaprc.ff99SB
+
+loadamberprep ~/forleap/GDP.prep
+loadamberprep ~/forleap/GTP.prep
+loadamberparams ~/forleap/frcmod.phos
+loadoff ions94.lib
+loadOff solvents.lib
+
+set default PBradii bondi
+loadOff $dir/build/mol.dat
+addions mol Cl- 0
+addions mol Na+ 0
+solvateOct mol TIP3PBOX $boxBorder
+saveamberparm mol $dir/build/$_name_.sys_box.prmtop $dir/build/$_name_.sys_box.inpcrd 
+savepdb mol $dir/build/$_name_.water.pdb
+quit
+
+eof

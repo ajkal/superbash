@@ -1,0 +1,16 @@
+#!/bin/bash -ue
+
+dir=$1
+cat << eof > $dir/input/leap.in.1
+source leaprc.ff99SB
+loadOff /gne/home/tomp/KYN/Lkyn.lib
+parm1 = loadAmberParams /gne/home/tomp/KYN/kyn.frcmod
+
+loadOff solvents.lib
+set default PBradii bondi
+mol=loadpdb $dir/build/$_name_.1.pdb
+saveamberparm mol $dir/build/leap1.top $dir/build/leap1.crd
+quit
+
+eof
+

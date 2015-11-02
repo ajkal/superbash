@@ -1,0 +1,19 @@
+#!/bin/bash
+
+dir=$1
+cat << eof > $dir/input/leap.in.1
+source oldff/leaprc.ff99SB
+
+loadamberprep ~/forleap/GDP.prep
+loadamberprep ~/forleap/GTP.prep
+loadamberparams ~/forleap/frcmod.phos
+loadoff ions94.lib
+loadOff solvents.lib
+
+set default PBradii bondi
+mol=loadpdb $dir/build/$_name_.1.pdb
+saveamberparm mol $dir/build/leap1.top $dir/build/leap1.crd
+quit
+
+eof
+
